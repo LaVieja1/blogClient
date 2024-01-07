@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react';
 import './App.css'
+import Router from './components/Router';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [messages, setMessages] = useState([]);
+  const [comments, setComments] = useState();
 
+  //get comments from api
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCommentInfo = async () => {
+    try {
+      const res = await fetch('https://top-blogapi.onrender.com/api/comments');
+      const commentsData = await res.json();
+
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Hubo un error con la operación fetch:', error);
+      setError('true');
+    }
+
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchCommentInfo();
+  }, []);
+
+  //display error and loading for api call
+  if (error) return (
+    <div>
+      <p>Hubo un error de conexión</p>
+    </div>
+  );
+
+  if (loading) return <p>Cargando...</p>;
+
+  //send props
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <Router
+        messages={messages}
+        setMessages={setMessages}
+        comments={comments}
+        setComments={setComments}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;
