@@ -2,4 +2,4 @@
 
 Client para API REST blog
 
-- [Live) (https://blog-client-jet.vercel.app/)
+- [Live](https://blog-client-jet.vercel.app/)
